@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block more_css %}
+<link rel="stylesheet" href="{% static '/home/css/style.css' %}"> 
+{% endblock %}
+
+
+{% block content %}
+    <h1>Краткие сводки по отделам</h1>
+    <div class="all-departments">
+        {% for info in data %}
+            <div class="department">
+                <div class="otdel">
+                    <h2>{{info.0.Otdel}}</h2> 
+                </div>
+                <h3>Средний чек</h3>
+                <p>{{info.0.SredniyChek }} {% if info.0.SredniyChek > info.1.SredniyChek %} ⬆️ {% else %} ⬇️ {% endif %}</p>
+                <h3>Выручка</h3>
+                {{info.0.Viruchka }} {% if info.0.Viruchka > info.1.Viruchka %} ⬆️ {% else %} ⬇️ {% endif %}
+                <h3>Клиентов</h3>
+                <p>{{info.0.KolVoKlientov}} {% if info.0.KolVoKlientov > info.1.KolVoKlientov %} ⬆️ {% else %} ⬇️ {% endif %}</p>
+                </div>
+        {% endfor %}
+    </div>
+{% endblock %}

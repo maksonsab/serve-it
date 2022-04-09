@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title> {{ title }}</title>
+        <link rel="stylesheet" href="{% static '/css/style.css' %}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+        {% block more_css %} {% endblock %}
+    </head>
+
+    <body>
+        <header class="header">
+            <img src="" alt="logo" id="company-logo">
+            <div class="nav-elements">
+                <nav class="header-element">
+                    {% for key, value in departments.items %}
+                        <a href="{% url 'department_url' otdel=value  %}">{{key | upper}}</a>
+                    {% endfor %}
+                </nav>
+            </div>
+        </header>
+
+        {% block content %}
+        {% endblock %}
+
+
+    </body>
+</html>
