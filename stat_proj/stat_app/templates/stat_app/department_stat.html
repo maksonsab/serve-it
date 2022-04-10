@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block script %}<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>{% endblock %}
+{% block more_css %} <link rel="stylesheet" href="{% static '/stat_app/style.css' %}"> {% endblock %}
+
+{% block content %}
+
+<center><h1>Графики отдела {{department | upper}}</h1></center>
+<div class="all-graphs">
+        <div class="graph" width="500px", height="500px">
+        <canvas id="chart" width="500px" height="500px"></canvas>
+        </div>
+
+        <div class="graph" width="500px", height="500px">
+            <canvas id="chart1" width="500px" height="500px"></canvas>
+        </div>
+
+        <div class="graph" width="500px", height="500px">
+            <canvas id="chart2" width="500px" height="500px"></canvas>
+        </div>
+
+        <div class="graph" width="500px", height="500px">
+            <canvas id="chart3" width="500px" height="500px"></canvas>
+        </div>
+</div>
+<!-- Количество клиентов -->
+
+<script>
+        let ctx = document.getElementById("chart").getContext("2d");
+
+    let chart = new Chart(ctx, {
+    type: "line",
+    data: {
+        labels: {{months | safe}},
+        datasets: [
+            {
+            label: "",
+            backgroundColor: 'rgb(255, 205, 86)',
+            borderColor: "#417690",
+            data: {{clients}},
+            fill: false,
+            tension: 0.5,
+            },
+            
+            
+        ]
+    },
+    options: {
+        title: {
+            text: "Количество клиентов",
+            display: true
+
+        }
+    }
+    });
+    </script>
+
+
+<!-- Средний чек -->
+
+<script>
+    let ctx1 = document.getElementById("chart1").getContext("2d");
+
+let chart1 = new Chart(ctx1, {
+type: "line",
+data: {
+    labels: {{months | safe}},
+    datasets: [
+        {
+        label: "",
+        backgroundColor: 'rgb(255, 205, 86)',
+        borderColor: "#417690",
+        data: {{sc}},
+        fill: false,
+        tension: 0.5,
+        },
+        
+        
+    ]
+},
+options: {
+    title: {
+        text: "Средний чек",
+        display: true
+
+    }
+}
+});
+</script>
+
+
+<!-- Прибыль и выручка -->
+
+<script>
+    let ctx2 = document.getElementById("chart2").getContext("2d");
+
+let chart2 = new Chart(ctx2, {
+type: "bar",
+data: {
+    labels: {{months | safe}},
+    datasets: [
+        {
+        label: "Прибыль, руб",
+        backgroundColor: 'rgb(255, 205, 86)',
+        borderColor: "#417690",
+        data: {{profit}},
+        },
+        {
+            label: "Выручка, руб",
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            data: {{revenue}},
+        }
+
+        
+        
+    ]
+},
+options: {
+    title: {
+        text: "Прибыль и выручка",
+        display: true
+
+    }
+}
+});
+</script>
+
+<!-- Сотрудников -->
+
+<script>
+    let ctx3 = document.getElementById("chart3").getContext("2d");
+
+let chart3 = new Chart(ctx3, {
+type: "line",
+data: {
+    labels: {{months | safe}},
+    datasets: [
+        {
+        label: "сотрудников",
+        backgroundColor: 'rgb(153, 102, 255)',
+        borderColor: "#417690",
+        data: {{employees}},
+        fill: false,
+        tension: 0.5,
+        },
+        
+        
+    ]
+},
+options: {
+    title: {
+        text: "Сотрудников в отделе",
+        display: true
+
+    }
+}
+});
+</script>
+
+
+{% endblock %}

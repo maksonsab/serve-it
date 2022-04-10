@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block script %}<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>{% endblock %}
+
+{% block content %}
+
+<div class="graph" width="500px", height="500px">
+<canvas id="chart" width="500px" height="500px"></canvas>
+</div>
+
+
+<script>
+        let ctx = document.getElementById("chart").getContext("2d");
+
+    let chart = new Chart(ctx, {
+    type: "pie",
+    data: {
+        labels: ["1C", "СТП", "АСУ ТП"],
+        datasets: [
+            {
+            label: "Выручка",
+            backgroundColor: [
+                            'rgb(255, 205, 86)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 99, 132)'
+                            ],
+            borderColor: "#417690",
+            data: [3879432, 915697, 4379047]
+            },
+            
+            
+        ]
+    },
+    options: {
+        title: {
+            text: "Выручка по отделам",
+            display: true
+
+        }
+    }
+    });
+    </script>
+
+
+
+
+{% endblock %}
+
+
+

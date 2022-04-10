@@ -4,6 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <title> {{ title }}</title>
+        {% block script %} {% endblock %}
         <link rel="stylesheet" href="{% static '/css/style.css' %}">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,11 +14,11 @@
 
     <body>
         <header class="header">
-            <img src="" alt="logo" id="company-logo">
+            <a href="/"><img src="" alt="logo" id="company-logo"></a>
             <div class="nav-elements">
                 <nav class="header-element">
                     {% for key, value in departments.items %}
-                        <a href="{% url 'department_url' otdel=value  %}">{{key | upper}}</a>
+                        <a href="{% url 'department_url' department=key  %}">{{value | upper}}</a>
                     {% endfor %}
                 </nav>
             </div>

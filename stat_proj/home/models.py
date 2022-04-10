@@ -1,8 +1,4 @@
-from pyexpat import model
 from django.db import models
-from django.forms import IntegerField
-
-# Create your models here.
 
 
 class EffectModel(models.Model):
