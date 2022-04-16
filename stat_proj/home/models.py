@@ -5,6 +5,8 @@ class EffectModel(models.Model):
     
     class Meta:
         db_table = 'effekt'
+        default_permissions = 'view'
+        managed = False
 
     id = models.IntegerField(primary_key=True)
     Period = models.DateField()
