@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#vscode
+.vscode/
+
+#data
+stat_proj/data2021.json
+stat_proj/data2022.json

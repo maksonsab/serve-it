@@ -1,75 +1,81 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block script %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+
+{% block more_css %} <link rel="stylesheet" href="{% static '/stat_app/style.css' %}"> {% endblock %}
+{% block script %}<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
 <script type="text/javascript">
 let cntr = 0
+
+
+colors = ['blue', 'green', 'red', 'black', 'yellow', 'gray', 'purple', '#D2691E']
+function addData(response_text, colors) {
+    let ret = []
+    let l = Object.keys(response_text).length;
+    for(let i = 1; i < l; i++) {
+        val = {
+            label : response_text[i].name,
+            data : response_text[i].values,
+            fill : false,
+            backgroundColor : colors[i],
+            borderColor : colors[i],
+        }
+        console.log('val is' + val.label)
+        ret.push(val)
+        
+
+    }
+    console.log( ret)
+    return ret
+} 
 
 
 function NewChart(response_text){
         let ctx = document.getElementById("chart").getContext("2d");
             let chart = new Chart(ctx, {
-            type: "bar",
+            type: "line",
             data: {
                 labels: response_text['dates'],
-                datasets: [
-                    {
-                    label: "часов",
-                    backgroundColor: 'rgb(255, 205, 86)',
-                    borderColor: "#417690",
-                    data: response_text['tabel'],
-                    fill: true,
-                    tension: 0.5,
-                    },
-                    {
-                    label: "часов по нарядам",
-                    backgroundColor: 'rgb(0, 0, 0)',
-                    borderColor: "#417690",
-                    data: response_text['order'],
-                    fill: true,
-                    tension: 0.5,   
-                    }  
-                ]
-            },
-            options: {
-                title: {
-                    text: response_text['employee'] + ' - ' + response_text['month'] + ' ' + response_text['year'],
-                    display: true
+                datasets: addData(response_text, colors)
+ 
                 },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            suggestedMin: 1,
-                            suggestedMax: 12
-                        }
-                    }]
+                options: {
+                    title: {
+                        text: "График загрузки",
+                        display: true
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                suggestedMin: 0,
+                                suggestedMax: 100
+                            }
+                        }]
+                    }
                 }
-            }
-            });
-        return chart
-    }
+                });
+            return chart
+        }
+
 
 function updateData(chart, response_text) {
-    
-    chart.data.labels = response_text['dates'];
-    chart.data.datasets[0].data = (response_text['tabel']);
-    chart.data.datasets[1].data = response_text['order'];
-    chart.options.title.text = response_text['employee'] + ' - ' + response_text['month'] + ' ' + response_text['year'];
-    console.log(chart.options.title.text);
+
+    chart.data.labels = response_text['dates']
+    chart.data.datasets.forEach((dataset, i = 1) => {
+        dataset.data = response_text[i + 1].values;
+        console.log(response_text[i + 1].values);
+    });
     chart.update();
 }
 
 document.addEventListener("DOMContentLoaded", function(){
     let btn = document.querySelector('input[name=send]');
-    
     btn.addEventListener('click', async function(event){
         event.preventDefault();
         cntr += 1;
-        let response = await fetch("{% url 'employee_stat'%}",{
+        let response = await fetch("{% url 'zagruzka_stat'%}",{
             method: "POST",
             body: new FormData(document.querySelector('form'))
         });
-
         let response_text = await response.json();
         if (cntr == 1){
            chart = NewChart(response_text)
@@ -78,21 +84,17 @@ document.addEventListener("DOMContentLoaded", function(){
         }
 
 
-    })
+})
     
 })
 
 
-
 </script>
-
-
 {% endblock %}
-{% block more_css %} <link rel="stylesheet" href="{% static '/stat_app/style.css' %}"> {% endblock %}
+
 
 {% block content %}
-    <h3>Отдел: {{ department_ru }} </h3>
-    <h3>Сотрудник: {{ employee }}</h3>
+<h3>График загруженности отдела {{ department_ru }}</h3>
 <div class="form-container">
     <form method="post" action="{% url 'employee_stat' %}" name="graph-form">
         {% csrf_token %}
@@ -118,7 +120,6 @@ document.addEventListener("DOMContentLoaded", function(){
         <input type="hidden" name="employee" value="{{ employee }}">
         <input type="submit" value="Получить данные" name="send" id="Send" class="drop">
         <input type="submit" value="Обновить" name="update" style="display: none;">
-
     </form>
 
     <div class="dropdown">
@@ -131,11 +132,11 @@ document.addEventListener("DOMContentLoaded", function(){
         </div>
     </div>
 </div>
-
-
-    <div class="all-graphs">
-        <div class="graph-emp" width="500px", height="500px">
-        <canvas id="chart" width="500px" height="500px"></canvas>
-        </div>
+<div class="all-graphs">
+    <div class="graph" width="100%">
+    <canvas id="chart" width="100%" ></canvas>
     </div>
+</div>
+
+
 {% endblock %}

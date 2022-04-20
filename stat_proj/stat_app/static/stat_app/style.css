@@ -10,6 +10,39 @@
 }
 
 .graph {
+    width: 80%;
+    height: 80%;
+}
+
+.graph-emp {
     width: 40%;
     height: 40%;
+}
+
+.form-container {
+    margin-left: 5px;
+    height: 50%;
+    display: flex;
+
+    justify-items: left;
+    
+    
+}
+.dropdown {
+    margin-left: 5px;
+}
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.drop {
+    height: 25px;
+    background-color: rgb(245, 245, 245);
+    align-content: center;
+    border: none;
+    border-radius: 3px;
+}
+
+.drop:hover {
+    background-color: #ddd;
 }

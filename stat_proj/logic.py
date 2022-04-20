@@ -1,5 +1,6 @@
 from datetime import date, timedelta
-import json
+from turtle import end_fill
+from urllib import response
 
 from .models import ZagruzkaModel
 
@@ -78,44 +79,16 @@ def simple_graph(employee:str, year, month) -> dict:
     return response_value
 
 def zagruzka_graph(year: int, month: int):
-    print(year ,month)
     '''Возвращаем данные для графика процент загрузки для view.all_employee'''
-    chached = False
+    #days = generate_month(year, month)
+    #db = ZagruzkaModel.objects.using('data').filter(Sotrudnik = emp).values_list('Period', 'ProcentZagr').all()
     response_value = dict()
-    counter = 0
-    if month != 0: #если запросили месяц
-        generated_month = generate_month(year, month)
+    if month == 0:
+        year = generate_year(year)
         for emp in employees.values():
-            counter += 1
             db = ZagruzkaModel.objects.using('data').filter(Sotrudnik = emp).all()
-            response_value[counter] = {}
-            response_value[counter]['values'] = []
-            response_value[counter]['name'] = emp
-            ls = int()
-            for d in generated_month:
-                for record in db:
-                    if d == record.Period:
-                        ls = record.ProcentZagr     
-                response_value[counter]['values'].append(ls)
-        response_value['dates'] = generated_month
-        return response_value
-
-    if month == 0: # месяц не передали
-        try:
-            with open(f'data{year}.json', 'r') as f:
-                response_value = json.loads(f.read())
-                chached = True
-            return response_value
-        except FileNotFoundError:
-            chached = False
-        generated_year = generate_year(year)
-        for emp in employees.values():
-            counter += 1
-            db = ZagruzkaModel.objects.using('data').filter(Sotrudnik = emp).all()
-            response_value[counter] = {}
-            response_value[counter]['values'] = []
-            response_value[counter]['name'] = emp
-            for m in generated_year:
+            response_value[emp] = []
+            for m in year:
                 ls = []
                 for d in m:
                     for record in db:
@@ -125,10 +98,6 @@ def zagruzka_graph(year: int, month: int):
                     ls = sum(ls) / len(ls)
                 except ZeroDivisionError:
                     ls = 0
-                response_value[counter]['values'].append(ls)
-    
-        response_value['dates'] = months
-        if not chached:
-            with open(f'data{year}.json', 'w') as f:
-                f.write(json.dumps(response_value, indent=4))
-        return response_value
+                response_value[emp].append(ls)
+    print(response_value)
+    return response_value                            

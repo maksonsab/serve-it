@@ -16,10 +16,10 @@
         <header class="header">
             <a href="/"><img src="{% static '/images/logo.png' %}" alt="logo" id="company-logo"></a>
             <div class="nav-elements">
+                {% for key, value in departments.items %}
                 <nav class="header-element">
-                    {% for key, value in departments.items %}
-                        <a href="{% url 'department_url' department=key  %}">{{value | upper}}</a>
-                    {% endfor %}
+                        <a href="{% url 'department_url' department=key  %}">{{value | upper}}</a>        
+                {% endfor %}
                 </nav>
             </div>
         </header>

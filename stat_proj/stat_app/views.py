@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 
 from home.models import EffectModel
-from .logic import simple_graph
+from .logic import simple_graph, zagruzka_graph
 
 # Create your views here.
 
@@ -16,7 +16,13 @@ departments = {
 employees = {
     'Сабирзанов' : 'Сабирзанов Максим',
     'Карянов' : 'Карянов Максим',
-    'Соколовский' : 'Соколовский Вячеслав'}
+    'Соколовский' : 'Соколовский Вячеслав',
+    'Качанов' : "Качанов Леонид",
+    "Шевкунова" : "Шевкунова Евгения Викторовна",
+    "Мурзинцева" : "Мурзинцева Ксения", 
+    "Самойлов" : "Самойлов Алексей",
+    "Трегубова" : 'Трегубова Маргарита Владимировна',
+    }
 
 def index(request):
     return render(request, 'stat_app/index.html')
@@ -51,7 +57,8 @@ def by_department(request, department):
         'revenue': revenue,
         'employees' : employees,
         'department' : departments.get(department),
-        'departments' : departments})
+        'departments' : departments,
+        'title' : f'Отдел {departments.get(department)}',})
 
 
 def by_employee(request, department: str, employee:str):
@@ -59,12 +66,31 @@ def by_employee(request, department: str, employee:str):
     if not employee_name:
         return HttpResponseNotFound('Такого сотрудника нет!')
     context = {
-        'department' : departments.get(department), 
+        'department' : department,
+        'department_ru' : departments.get(department), 
         'employee' : employee_name,
         'departments' : departments,
+        'employees' : employees,
+        'title' : f'Статистика: {employee_name}'
         }
     
-    return render(request, 'stat_app/employee_copy.html', context=context)
+    return render(request, 'stat_app/employee.html', context=context)
+
+
+def all_employee(request, department: str) -> render:
+    '''Вьюшка страницы загрузки отдела'''
+    if department != 'stp':
+        return HttpResponseNotFound(f'Информации по отделау {departments.get(department)} ещё нет!')
+    
+
+    context = {
+        'departments' : departments,
+        'department' : department,
+        'department_ru' : departments.get(department),
+        'employees' : employees,
+        'title' : f'Загруженность {departments.get(department)}'
+    }
+    return render(request, 'stat_app/employee_all.html', context=context)
 
 
 
@@ -82,3 +108,11 @@ def data_for_graph(request) -> JsonResponse:
         return JsonResponse(response_var)
     else:
         return HttpResponseNotFound('Страница не найдена')
+
+def zagruzka_view(request) -> JsonResponse:
+    if request.method == 'POST':
+        try:
+            year, month = int(request.POST.get('year')), int(request.POST.get('month'))
+        except Exception:
+            return HttpResponseNotFound('Неверные данные!')
+        return JsonResponse(zagruzka_graph(year, month))
