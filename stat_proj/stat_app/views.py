@@ -24,11 +24,12 @@ employees = {
     "Трегубова" : 'Трегубова Маргарита Владимировна',
     }
 
-def index(request):
+def index(request) -> render:
     return render(request, 'stat_app/index.html')
 
-
-def by_department(request, department):
+#!!!!переделать!!!!!
+def by_department(request, department:str) -> render:
+    '''Вьюшка страницы эффективности отдела'''
     dept = departments.get(department)
     if not dept:
        return HttpResponseNotFound('Такого отдела нет!')
@@ -48,20 +49,22 @@ def by_department(request, department):
             revenue.append(mod.Viruchka)
             employees.append(mod.KolVoSotrudnikovOtdela)
             profit.append(mod.Effekt)
-        return render(request, 
-        'stat_app/department_stat.html', 
-        context = {'months' : month, 
-        'clients': clients,
-        'sc' : sc, 
-        'profit' : profit,
-        'revenue': revenue,
-        'employees' : employees,
-        'department' : departments.get(department),
-        'departments' : departments,
-        'title' : f'Отдел {departments.get(department)}',})
+        context = {
+            'months' : month, 
+            'clients': clients,
+            'sc' : sc, 
+            'profit' : profit,
+            'revenue': revenue,
+            'employees' : employees,
+            'department' : departments.get(department),
+            'departments' : departments,
+            'title' : f'Отдел {departments.get(department)}',
+        }
+        return render(request,'stat_app/department_stat.html', context = context)
 
 
-def by_employee(request, department: str, employee:str):
+def by_employee(request, department: str, employee:str) -> render:
+    '''Вьюшка страницы загрузки отдельного сотрудника'''
     employee_name = employees.get(employee)
     if not employee_name:
         return HttpResponseNotFound('Такого сотрудника нет!')
@@ -73,7 +76,6 @@ def by_employee(request, department: str, employee:str):
         'employees' : employees,
         'title' : f'Статистика: {employee_name}'
         }
-    
     return render(request, 'stat_app/employee.html', context=context)
 
 
@@ -81,8 +83,6 @@ def all_employee(request, department: str) -> render:
     '''Вьюшка страницы загрузки отдела'''
     if department != 'stp':
         return HttpResponseNotFound(f'Информации по отделау {departments.get(department)} ещё нет!')
-    
-
     context = {
         'departments' : departments,
         'department' : department,
@@ -95,6 +95,7 @@ def all_employee(request, department: str) -> render:
 
 
 def data_for_graph(request) -> JsonResponse:
+    '''Этот вью предоставляет данные для графика загрузки конкретного сотрудника'''
     if request.method == 'POST':
         try:
             year, month = int(request.POST.get('year')), int(request.POST.get('month'))
@@ -104,12 +105,12 @@ def data_for_graph(request) -> JsonResponse:
         if not employees.keys():
             return HttpResponseNotFound('Такого сотрудника нет!')
         response_var = simple_graph(employee, year, month)
-        response_var['employee'] = employee
         return JsonResponse(response_var)
     else:
         return HttpResponseNotFound('Страница не найдена')
 
 def zagruzka_view(request) -> JsonResponse:
+    '''Этот вью предоставляет данные для графика загрузки отдела'''
     if request.method == 'POST':
         try:
             year, month = int(request.POST.get('year')), int(request.POST.get('month'))
